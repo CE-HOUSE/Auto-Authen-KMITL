@@ -145,9 +145,9 @@ def start():
 
 
 def create_config():
-    input_username = input('Your username (mostly student ID): ')
+    input_username = input('Your username (mostly student ID, without @kmitl.ac.th): ')
     input_password = getpass.getpass('Your password: ')
-    input_yourIp = input('Your PublicIp: ')
+    input_yourIp = input('Your Public IP Address: ')
 
     data = {}
     if input_username != '':
