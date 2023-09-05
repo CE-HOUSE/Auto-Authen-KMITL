@@ -26,10 +26,6 @@ agent = requests.session()
 
 # handle Ctrl+C
 def signal_handler(signal, frame):
-    running = (client_token != '')
-    if not running:
-        print('\nGood bye!')
-        sys.exit(0)
     print_format('Good bye!', end='\n')
     sys.exit(0)
 
@@ -88,7 +84,6 @@ def init():
     print_format('\nCE-HOUSE', small_only=True, show_time=False)
 
 def login():
-    global client_token
     global data
 
     try:
@@ -104,18 +99,13 @@ def login():
     if not content_dict['success']:
         print_error('Error! Something went wrong (maybe too many attempt?)...')
 
-    token = content_dict['token']
     data = content_dict['data']
-
-
-    # get value from response form
-    # ip - token - account
-    client_token = token
 
     if content.status_code != 200:
         print_error(
             'Error! Something went wrong (maybe wrong username and/or password?)...')
-
+    elif content.status_code == 200:
+        print("HeartBeat is OK")
 def checkConnection():
     command = "ping"
     arguments = []
@@ -147,7 +137,7 @@ def start():
             time.sleep(time_repeat)
         else:
             if login_attempt > max_login_attempt:
-                print_error("Login attempt exceed maximum attempt")
+                print_error("Login attempt exceed maximum")
                 break; 
             login()
             login_attempt += 1
