@@ -85,7 +85,7 @@ def init():
                                                               
 '''
     print_format(logo, large_only=True, show_time=False)
-    print_format('\nISAG LAB', small_only=True, show_time=False)
+    print_format('\nCE-HOUSE', small_only=True, show_time=False)
 
 def login():
     global client_token
