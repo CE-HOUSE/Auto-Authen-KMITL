@@ -119,7 +119,7 @@ def checkConnection():
         return False
 
 def start():
-    login_attempt = 0
+    loginCount = 60
     printed_logged_in = False
     printed_lost = False
     while True:
@@ -140,8 +140,9 @@ def start():
 ''', show_time=False)
                 printed_logged_in = True
                 printed_lost = False
-
-            login()
+            if(loginCount >= 60):
+                login()
+                loginCount = 0
             time.sleep(time_repeat)
         else:
             if not printed_lost:
@@ -157,7 +158,6 @@ def start():
                 printed_lost = True
                 printed_logged_in = False
             login()
-            login_attempt += 1
             time.sleep(10)
 
 
