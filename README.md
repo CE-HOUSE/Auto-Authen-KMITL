@@ -1,6 +1,6 @@
 # Auto-authen-KMITL
 
-A **_Python script_** that let you automatically authenticate into KMITL network
+A **_Python script_** that let you [automatically authenticate](https://github.com/CE-HOUSE/auto-authen-kmitl#disclaimer) into KMITL network
 
 ## Getting started
 ### Prerequisites
