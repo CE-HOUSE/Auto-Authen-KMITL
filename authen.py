@@ -1,6 +1,7 @@
 import argparse
 import platform    
 import json
+from sqlite3 import Timestamp
 from subprocess import Popen, PIPE
 import shutil
 import getpass
@@ -15,7 +16,7 @@ password = ''
 ipAddress= ''
 acip="10.252.13.10"
 umac = '7486e2507746'
-time_repeat = 5 * 60  
+time_repeat = 8 
 max_login_attempt = 20
 
 client_ip = ''
@@ -80,6 +81,7 @@ def init():
          ╚═════╝╚══════╝    ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚══════╝╚══════╝
                                                               
 '''
+
     print_format(logo, large_only=True, show_time=False)
     print_format('\nCE-HOUSE', small_only=True, show_time=False)
 
@@ -90,22 +92,16 @@ def login():
         url = server_url
         content = agent.post(url,params={'userName': username, 'userPass': password,'uaddress': ipAddress,'umac':umac,'agreed':1,'acip':acip,'authType':1})
     except requests.exceptions.RequestException:
-        print_format('Connection lost...')
-        time.sleep(1)
+        print_format('Connection lost...' ,show_time=True, end='\n')
         return
     content_dict = json.loads(content.text)
 
     # check if request is successful
-    if not content_dict['success']:
-        print_error('Error! Something went wrong (maybe too many attempt?)...')
-
     data = content_dict['data']
 
-    if content.status_code != 200:
-        print_error(
-            'Error! Something went wrong (maybe wrong username and/or password?)...')
-    elif content.status_code == 200:
-        print("HeartBeat is OK")
+    if content.status_code == 200:
+        print_format("HeartBeat is OK", show_time=True, end='\n')
+
 def checkConnection():
     command = "ping"
     arguments = []
@@ -116,29 +112,50 @@ def checkConnection():
     process = Popen([command] + arguments, stdout=PIPE, stderr=PIPE, text=True)
     stdout, stderr = process.communicate()
     if("TTL=" in stdout):
-        return False
-    elif stderr:
-        return False
-    else:
         return True
+    elif stderr:
+        return True
+    else:
+        return False
 
 def start():
     login_attempt = 0
     printed_logged_in = False
+    printed_lost = False
     while True:
         connection = checkConnection()
         if(connection):
             if not printed_logged_in:  # print only when log in successful
+                print('',end='\n')
                 print_format('Welcome {}!'.format(username), end='\n')
                 print_format('Your IP:', ipAddress, end='\n')
-                print_format('Heatbeat every', time_repeat, 'seconds')
                 print_format('Max login attempt:', max_login_attempt)
+                print_format('''
+         ██████╗ ██████╗ ███╗   ██╗███╗   ██╗███████╗ ██████╗████████╗███████╗██████╗ 
+        ██╔════╝██╔═══██╗████╗  ██║████╗  ██║██╔════╝██╔════╝╚══██╔══╝██╔════╝██╔══██╗
+        ██║     ██║   ██║██╔██╗ ██║██╔██╗ ██║█████╗  ██║        ██║   █████╗  ██║  ██║
+        ██║     ██║   ██║██║╚██╗██║██║╚██╗██║██╔══╝  ██║        ██║   ██╔══╝  ██║  ██║
+        ╚██████╗╚██████╔╝██║ ╚████║██║ ╚████║███████╗╚██████╗   ██║   ███████╗██████╔╝
+         ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═══╝╚══════╝ ╚═════╝   ╚═╝   ╚══════╝╚═════╝ 
+''', show_time=False)
                 printed_logged_in = True
+                printed_lost = False
+
+            login()
             time.sleep(time_repeat)
         else:
-            if login_attempt > max_login_attempt:
-                print_error("Login attempt exceed maximum")
-                break; 
+            if not printed_lost:
+                print('',end='\n')
+                print_format('''
+        ██╗      ██████╗ ███████╗████████╗
+        ██║     ██╔═══██╗██╔════╝╚══██╔══╝
+        ██║     ██║   ██║███████╗   ██║   
+        ██║     ██║   ██║╚════██║   ██║   
+        ███████╗╚██████╔╝███████║   ██║   
+        ╚══════╝ ╚═════╝ ╚══════╝   ╚═╝   
+''', show_time=False)
+                printed_lost = True
+                printed_logged_in = False
             login()
             login_attempt += 1
             time.sleep(10)
