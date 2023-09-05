@@ -15,7 +15,7 @@ password = ''
 ipAddress= ''
 acip="10.252.13.10"
 umac = '7486e2507746'
-time_repeat = 10  # seconds
+time_repeat = 5 * 60  
 max_login_attempt = 20
 
 client_ip = ''
@@ -145,11 +145,14 @@ def start():
                 print_format('Max login attempt:', max_login_attempt)
                 printed_logged_in = True
             time.sleep(time_repeat)
-            login()
         else:
+            if login_attempt > max_login_attempt:
+                print_error("Login attempt exceed maximum attempt")
+                break; 
             login()
             login_attempt += 1
-        time.sleep(10)
+            time.sleep(10)
+
 
 def create_config():
     input_username = input('Your username (mostly student ID): ')
@@ -218,5 +221,4 @@ if __name__ == '__main__':
 
     print_format('Logging in with username \'{}\'...'.format(username))
 
-    while True:
-        start()
+    start()
