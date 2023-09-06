@@ -1,8 +1,5 @@
-import argparse
-import platform    
+import argparse  
 import json
-from sqlite3 import Timestamp
-from subprocess import Popen, PIPE
 import shutil
 import getpass
 import signal
@@ -16,7 +13,7 @@ password = ''
 ipAddress= ''
 acip="10.252.13.10"
 umac = '7486e2507746'
-time_repeat = 10 
+time_repeat = 5*60 
 max_login_attempt = 20
 
 client_ip = ''
@@ -111,7 +108,7 @@ def checkConnection() -> (bool, bool):
     return True, False
 
 def start():
-    loginCount = 60
+    login_attempt = 0
     printed_logged_in = False
     printed_lost = False
     login()
@@ -123,7 +120,7 @@ def start():
                 print_format('Welcome {}!'.format(username), end='\n')
                 print_format('Your IP:', ipAddress, end='\n')
                 print_format('Heartbeat every', time_repeat, 'seconds', end='\n')
-                print_format('Log in every {} minutes'.format(loginCount*time_repeat/60))
+                print_format('Log in every {} minutes'.format(login_attempt*time_repeat/60))
                 print_format('''
          ██████╗ ██████╗ ███╗   ██╗███╗   ██╗███████╗ ██████╗████████╗███████╗██████╗ 
         ██╔════╝██╔═══██╗████╗  ██║████╗  ██║██╔════╝██╔════╝╚══██╔══╝██╔════╝██╔══██╗
@@ -135,13 +132,8 @@ def start():
                 printed_logged_in = True
                 printed_lost = False
             print_format("Heartbeat is OK", show_time=True, end='\n')
-            loginCount += 1
-            if(loginCount >= 60):
-                login()
-                loginCount = 0
             time.sleep(time_repeat)
         else:
-            loginCount = 60
             if not printed_lost:
                 print('',end='\n')
                 print_format('''
@@ -154,7 +146,11 @@ def start():
 ''', show_time=False)
                 printed_lost = True
                 printed_logged_in = False
+            if login_attempt > max_login_attempt:
+                print_error("Login attempt exceed maximum")
+                break; 
             login()
+            login_attempt+=1
             time.sleep(10)
 
 
