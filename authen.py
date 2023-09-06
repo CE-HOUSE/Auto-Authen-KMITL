@@ -76,11 +76,13 @@ def init():
         ██║     ██╔══╝      ██╔══██║██║   ██║██║   ██║╚════██║██╔══╝  
         ╚██████╗███████╗    ██║  ██║╚██████╔╝╚██████╔╝███████║███████╗
          ╚═════╝╚══════╝    ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚══════╝╚══════╝
-                                                              
+                                                                      
+                        https://github.com/CE-HOUSE                   
+        
 '''
 
     print_format(logo, large_only=True, show_time=False)
-    print_format('\nCE-HOUSE', small_only=True, show_time=False)
+    print_format('CE-HOUSE', show_time=True)
 
 def login():
     global data
@@ -120,7 +122,7 @@ def start():
                 print_format('Welcome {}!'.format(username), end='\n')
                 print_format('Your IP:', ipAddress, end='\n')
                 print_format('Heartbeat every', time_repeat, 'seconds', end='\n')
-                print_format('Log in every {} minutes'.format(login_attempt*time_repeat/60))
+                print_format('Max login attempt:',max_login_attempt)
                 print_format('''
          ██████╗ ██████╗ ███╗   ██╗███╗   ██╗███████╗ ██████╗████████╗███████╗██████╗ 
         ██╔════╝██╔═══██╗████╗  ██║████╗  ██║██╔════╝██╔════╝╚══██╔══╝██╔════╝██╔══██╗
