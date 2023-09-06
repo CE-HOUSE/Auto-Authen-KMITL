@@ -76,11 +76,13 @@ def init():
         ██║     ██╔══╝      ██╔══██║██║   ██║██║   ██║╚════██║██╔══╝  
         ╚██████╗███████╗    ██║  ██║╚██████╔╝╚██████╔╝███████║███████╗
          ╚═════╝╚══════╝    ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚══════╝╚══════╝
-                                                              
+                                                                      
+                        https://github.com/CE-HOUSE                   
+        
 '''
 
     print_format(logo, large_only=True, show_time=False)
-    print_format('\nCE-HOUSE', small_only=True, show_time=False)
+    print_format('CE-HOUSE', show_time=True)
 
 def login():
     global data
