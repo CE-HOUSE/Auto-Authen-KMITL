@@ -18,6 +18,7 @@ max_login_attempt = 20
 
 client_ip = ''
 server_url = 'https://portal.kmitl.ac.th:19008/portalauth/login'
+server_url_heartbeat = 'https://nani.csc.kmitl.ac.th/network-api/data/'
 data = ''
 agent = requests.session()
 
@@ -100,6 +101,23 @@ def login():
     if content.status_code != 200:
         print_format('Error! Something went wrong (maybe wrong username and/or password?)...')
 
+def heatbeat() -> (bool, bool):
+    try:
+        url = server_url
+        content = agent.post(url,params={'username': username,'os':"Chrome v116.0.5845.141 on Windows 10 64-bit","speed":1.29,"newauth":1})
+    except requests.exceptions.RequestException:
+        print_format('Connection lost...')
+        time.sleep(1)
+        return False, False
+    status = content.status_code
+    if status == 200:
+        print_format('Heatbeat OK...')
+        return True, True
+    else:
+        print_format('Heatbeat failed...')
+        return True, False
+
+
 def checkConnection() -> (bool, bool):
     try:
         content = requests.get('http://detectportal.firefox.com/success.txt')
@@ -113,9 +131,13 @@ def start():
     login_attempt = 0
     printed_logged_in = False
     printed_lost = False
+    reset_timer = time.time()+(8*60*60)
     login()
     while True:
+        remain_to_reset = reset_timer-time.time()
         connection, internet = checkConnection()
+        if remain_to_reset <= 480:
+            return
         if(connection and internet):
             if not printed_logged_in:  # print only when log in successful
                 print('',end='\n')
@@ -133,8 +155,18 @@ def start():
 ''', show_time=False)
                 printed_logged_in = True
                 printed_lost = False
-            print_format("Heartbeat is OK", show_time=True, end='\n')
             time.sleep(time_repeat)
+            connection, heatdone = heatbeat()
+            if not connection and not heatdone:
+                return
+            elif connection and not heatdone:
+                login()
+        elif connection and not internet:
+            if login_attempt == max_login_attempt:
+                print_error(
+                    'Error! Please recheck your username and password...')
+            login()
+            login_attempt += 1
         else:
             if not printed_lost:
                 print('',end='\n')
@@ -223,4 +255,5 @@ if __name__ == '__main__':
 
     print_format('Logging in with username \'{}\'...'.format(username))
 
-    start()
+    while True:
+        start()
