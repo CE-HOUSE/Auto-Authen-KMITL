@@ -104,7 +104,7 @@ def login():
 def heatbeat() -> (bool, bool):
     try:
         url = server_url
-        content = agent.post(url,params={'username': username,'os':"Chrome v116.0.5845.141 on Windows 10 64-bit","speed":1.29,"newauth":1})
+        content = agent.post(server_url_heartbeat,params={'username': username,'os':"Chrome v116.0.5845.141 on Windows 10 64-bit","speed":1.29,"newauth":1})
     except requests.exceptions.RequestException:
         print_format('Connection lost...')
         time.sleep(1)
