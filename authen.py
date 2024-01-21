@@ -1,3 +1,4 @@
+import uuid
 import argparse  
 import json
 import shutil
@@ -12,7 +13,7 @@ username = ''
 password = ''
 ipAddress= ''
 acip="10.252.13.10"
-umac = '7486e2507746'
+umac = ''.join(['{:02x}'.format((uuid.getnode() >> ele) & 0xff) for ele in range(0,8*6,8)][::-1])
 time_repeat = 5*60 
 max_login_attempt = 20
 
